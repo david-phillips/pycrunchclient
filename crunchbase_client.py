@@ -20,7 +20,7 @@ Options:
     --search-keyword           <keyword>
 
     --list-companies
-    --list-persons
+    --list-people
     --list-financial-orgs
     --list-products
     --list-services
@@ -49,7 +49,7 @@ action_table = {
     '--show-service':                 crunchbase.show_service ,   
     '--search-keyword':               crunchbase.search_keyword ,   
     '--list-companies':               crunchbase.list_companies,
-    '--list-persons':                 crunchbase.list_persons,
+    '--list-people':                  crunchbase.list_people,
     '--list-financial-orgs':          crunchbase.list_financial_orgs,
     '--list-products':                crunchbase.list_products,
     '--list-services':                crunchbase.list_services,
@@ -68,6 +68,8 @@ action_table = {
 
 
 def execute_command_line_input():
+    if len(sys.argv) < 2:
+        print_usage_and_exit()
     opt = sys.argv[1]
     if opt == '--help':
         print_usage_and_exit()
