@@ -1,5 +1,6 @@
 import sys
 import urllib2
+import urllib
 import urlparse
 import pprint
 try:
@@ -81,41 +82,40 @@ def list_entities(namespace):
 
     request_url = API_BASE_URL +  namespace + '.js'
 
-    print 'list_entities URL', request_url
     return _make_request(request_url)
 
 
 
-def _permalink_or_posts_search(search_type, namespace, name, last_name=None):
+def _permalink_or_posts_search(search_type, namespace, name):
     '''
     '''
     if namespace not in API_PLURAL_NAMESPACES:
         raise ValueError(namespace + ' is not a valid namespace.')
     
-    if namespace == 'person':
-        if last_name is None:
-            raise ValueError('Last name param required for "people" requests')
-        request_url = API_BASE_URL + namespace + '/' + search_type + '?first_name=' + name + '&last_name=' + last_name
+    if namespace == 'people':
+        try:
+            first, last = name.split()
+        except ValueError:
+            raise ValueError('Person names must be of form "Firstname Lastname"')
+        request_url = API_BASE_URL + namespace + '/' + search_type + '?first_name=' + first + '&last_name=' + last
     else:
-        if last_name is not None:
-            sys.stderr.write('Last name param only required for "people" requests... ignoring\n')
         request_url = API_BASE_URL + namespace + '/' + search_type + '?name=' + name
         
     return _make_request(request_url)
 
 
 
-def permalink_search(namespace, name, last_name=None):
+def permalink_search(namespace, name):
     '''
     '''
-    _permalink_or_posts_search('permalink', namespace, name, last_name)
+    return _permalink_or_posts_search('permalink', namespace, name)
 
 
 
-def posts_search(namespace, name, last_name=None):
+def posts_search(namespace, name):
     '''
     '''
-    _permalink_or_posts_search('posts', namespace, name, last_name)
+    return _permalink_or_posts_search('posts', namespace, name)
 
 
 
@@ -133,36 +133,36 @@ def show_financial_org(org):
 def show_product(product):
     display_response(show_entity('product', product))
 def show_service(service):
-    display_response(show_entity('service', service))
+    display_response(show_entity('service-provider', service))
 def search_keyword(keyword):
     display_response(search_entities(keyword))
 def list_companies():
     display_response(list_entities('companies'))
-def list_persons():
+def list_people():
     display_response(list_entities('people'))
 def list_financial_orgs():
     display_response(list_entities('financial-organizations'))
 def list_products():
     display_response(list_entities('products'))
 def list_services():
-    display_response(list_entities('services'))
+    display_response(list_entities('service-providers'))
 def find_company_permalink(company):
     display_response(permalink_search('companies', company))
-def find_person_permalink(fname, lname):
-    display_response(permalink_search('people', fname, lname))
+def find_person_permalink(name):
+    display_response(permalink_search('people', name))
 def find_financial_org_permalink(org):
     display_response(permalink_search('financial-organizations', org))
 def find_product_permalink(product):
     display_response(permalink_search('products', product))
 def find_service_permalink(service):
-    display_response(permalink_search('services', service))
+    display_response(permalink_search('service-providers', service))
 def find_company_posts(company):
     display_response(posts_search('companies', company))
-def find_person_posts(fname, lname):
-    display_response(posts_search('people', fname, lname))
+def find_person_posts(name):
+    display_response(posts_search('people', name))
 def find_financial_org_posts(org):
     display_response(posts_search('financial-organizations', org))
 def find_product_posts(product):
     display_response(posts_search('products', product))
 def find_service_posts(service):
-    display_response(posts_search('services', service))
+    display_response(posts_search('service-providers', service))
