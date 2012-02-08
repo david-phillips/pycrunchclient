@@ -31,11 +31,14 @@ API_PLURAL_NAMESPACES = [
 
 
 
-def _make_request(url):
+def _make_request(url_query):
     '''
     Private method makes HTTP request to API URL
     and returns the JSON response.
     '''
+    url_query = urllib.quote(url_part, '?=')
+
+    url = API_BASE_URL + url_query
     try:
         response = urllib2.urlopen(url)
     except urllib2.URLError, e:
@@ -56,21 +59,21 @@ def show_entity(namespace, entity):
     if namespace not in API_SINGULAR_NAMESPACES:
         raise ValueError(namespace + ' is not a valid namespace.')
 
-    request_url = API_BASE_URL +  namespace + '/' + entity + '.js'
+    url_query =  namespace + '/' + entity + '.js'
 
-    return _make_request(request_url)
+    return _make_request(url_query)
 
 
 
 def search_entities(keyword, page=None):
     '''
     '''
-    request_url = API_BASE_URL + 'search.js?query=' + keyword
+    url_query = 'search.js?query=' + keyword
 
     if page is not None:
-        request_url += '?page=' + page
+        url_query += '?page=' + page
 
-    return  _make_request(request_url)
+    return  _make_request(url_query)
 
 
 
@@ -80,9 +83,9 @@ def list_entities(namespace):
     if namespace not in API_PLURAL_NAMESPACES:
         raise ValueError(namespace + ' is not a valid namespace.')
 
-    request_url = API_BASE_URL +  namespace + '.js'
+    url_query =  namespace + '.js'
 
-    return _make_request(request_url)
+    return _make_request(url_query)
 
 
 
@@ -97,11 +100,11 @@ def _permalink_or_posts_search(search_type, namespace, name):
             first, last = name.split()
         except ValueError:
             raise ValueError('Person names must be of form "Firstname Lastname"')
-        request_url = API_BASE_URL + namespace + '/' + search_type + '?first_name=' + first + '&last_name=' + last
+        url_query = namespace + '/' + search_type + '?first_name=' + first + '&last_name=' + last
     else:
-        request_url = API_BASE_URL + namespace + '/' + search_type + '?name=' + name
+        url_query = namespace + '/' + search_type + '?name=' + name
         
-    return _make_request(request_url)
+    return _make_request(url_query)
 
 
 
