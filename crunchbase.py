@@ -36,7 +36,7 @@ def _make_request(url_query):
     Private method makes HTTP request to API URL
     and returns the JSON response.
     '''
-    url_query = urllib.quote(url_part, '?=')
+    url_query = urllib.quote(url_query, '?=')
 
     url = API_BASE_URL + url_query
     try:
