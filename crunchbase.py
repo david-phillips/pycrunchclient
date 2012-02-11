@@ -1,8 +1,37 @@
+'''
+Module crunchbase defines client functions or interacting
+with the CrunchBase API.
+
+More on CrunchBase here: http://www.crunchbase.com/
+
+The following functions are defined by the module:
+    show_company(company)
+    show_person(person)
+    show_financial_org(org)
+    show_product(product)
+    show_service(service)
+    search_keyword(keyword)
+    list_companies()
+    list_people()
+    list_financial_orgs()
+    list_products()
+    list_services()
+    find_company_permalink(company)
+    find_person_permalink(name)
+    find_financial_org_permalink(org)
+    find_product_permalink(product)
+    find_service_permalink(service)
+    find_company_posts(company)
+    find_person_posts(name)
+    find_financial_org_posts(org)
+    find_product_posts(product)
+    find_service_posts(service)
+'''
+
 import sys
 import urllib2
 import urllib
 import urlparse
-import pprint
 try:
     import json
 except ImportError:
@@ -36,15 +65,15 @@ def _make_request(url_query):
     Private method makes HTTP request to API URL
     and returns the JSON response.
     '''
-    url_query = urllib.quote(url_query, '?&=')
+    url_query = urllib.quote(url_query, '/?&=')
 
     url = API_BASE_URL + url_query
     try:
-        response = urllib2.urlopen(url)
+        response = urllib2.urlopen(url).read()
     except urllib2.URLError, e:
         sys.exit('HTTP/URL Error.  Entity probably does not exist in CrunchBase.')
 
-    return json.load(response)
+    return json.loads(response)
 
 
 
@@ -67,6 +96,11 @@ def show_entity(namespace, entity):
 
 def search_entities(keyword, page=None):
     '''
+    Performs a keyword search against CrunchBase.
+
+    Results are returned in sets of 10.
+    Passing a page param of 3 will return
+    results 21-30.
     '''
     url_query = 'search.js?query=' + keyword
 
@@ -79,6 +113,8 @@ def search_entities(keyword, page=None):
 
 def list_entities(namespace):
     '''
+    Given a plural namespace, this function will return
+    a json collection of *all* entities in the namespace.
     '''
     if namespace not in API_PLURAL_NAMESPACES:
         raise ValueError(namespace + ' is not a valid namespace.')
@@ -91,6 +127,8 @@ def list_entities(namespace):
 
 def _permalink_or_posts_search(search_type, namespace, name):
     '''
+    Contains code shared by permalink/posts search.  In particular
+    special treatment of person names vs all other types.
     '''
     if namespace not in API_PLURAL_NAMESPACES:
         raise ValueError(namespace + ' is not a valid namespace.')
@@ -122,50 +160,45 @@ def posts_search(namespace, name):
 
 
 
-def display_response(response):
-    pprint.pprint(response)
-
-
-
 def show_company(company):
-    display_response(show_entity('company', company))
+    return show_entity('company', company)
 def show_person(person):
-    display_response(show_entity('person', person))
+    return show_entity('person', person)
 def show_financial_org(org):
-    display_response(show_entity('financial-organization', org))
+    return show_entity('financial-organization', org)
 def show_product(product):
-    display_response(show_entity('product', product))
+    return show_entity('product', product)
 def show_service(service):
-    display_response(show_entity('service-provider', service))
+    return show_entity('service-provider', service)
 def search_keyword(keyword):
-    display_response(search_entities(keyword))
+    return search_entities(keyword)
 def list_companies():
-    display_response(list_entities('companies'))
+    return list_entities('companies')
 def list_people():
-    display_response(list_entities('people'))
+    return list_entities('people')
 def list_financial_orgs():
-    display_response(list_entities('financial-organizations'))
+    return list_entities('financial-organizations')
 def list_products():
-    display_response(list_entities('products'))
+    return list_entities('products')
 def list_services():
-    display_response(list_entities('service-providers'))
+    return list_entities('service-providers')
 def find_company_permalink(company):
-    display_response(permalink_search('companies', company))
+    return permalink_search('companies', company)
 def find_person_permalink(name):
-    display_response(permalink_search('people', name))
+    return permalink_search('people', name)
 def find_financial_org_permalink(org):
-    display_response(permalink_search('financial-organizations', org))
+    return permalink_search('financial-organizations', org)
 def find_product_permalink(product):
-    display_response(permalink_search('products', product))
+    return permalink_search('products', product)
 def find_service_permalink(service):
-    display_response(permalink_search('service-providers', service))
+    return permalink_search('service-providers', service)
 def find_company_posts(company):
-    display_response(posts_search('companies', company))
+    return posts_search('companies', company)
 def find_person_posts(name):
-    display_response(posts_search('people', name))
+    return posts_search('people', name)
 def find_financial_org_posts(org):
-    display_response(posts_search('financial-organizations', org))
+    return posts_search('financial-organizations', org)
 def find_product_posts(product):
-    display_response(posts_search('products', product))
+    return posts_search('products', product)
 def find_service_posts(service):
-    display_response(posts_search('service-providers', service))
+    return posts_search('service-providers', service)

@@ -1,6 +1,7 @@
 import sys
 import os
 import crunchbase
+import pprint
 
 
 
@@ -66,6 +67,9 @@ action_table = {
 }
     
 
+def display_results(results):
+    pprint.pprint(results)
+
 
 def execute_command_line_input():
     if len(sys.argv) < 2:
@@ -74,13 +78,13 @@ def execute_command_line_input():
     if opt == '--help':
         print_usage_and_exit()
     elif opt.startswith('--show'):
-        action_table[opt](sys.argv[2])
+        display_results(action_table[opt](sys.argv[2]))
     elif opt.startswith('--search'):
-        action_table[opt](sys.argv[2])
+        display_results(action_table[opt](sys.argv[2]))
     elif opt.startswith('--list'):
-        action_table[opt]()
+        display_results(action_table[opt]())
     elif opt.startswith('--find'):
-        action_table[opt](sys.argv[2])
+        display_results(action_table[opt](sys.argv[2]))
     else:
         sys.exit('Unrecognized option: ' + opt)
          
